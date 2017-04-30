@@ -28,16 +28,16 @@ Proof.
 Qed.
 
 Theorem hoare_seq : forall P R Q c1 c2,
-    {{ P }} c1 {{ R }} ->
     {{ R }} c2 {{ Q }} ->
+    {{ P }} c1 {{ R }} ->
     {{ P }} c1 ;; c2 {{ Q }}.
 Proof.
-  unfold hoare_triple. intros. apply H in H1. destruct H1.
+  unfold hoare_triple. intros. apply H0 in H1. destruct H1.
   split. unfold safeAt_bs, not. intro. inversion H3; subst.
   unfold safeAt_bs, not in H1. apply H1 in H5. inversion H5.
-  apply H2 in H8. apply H0 in H8. destruct H8.
+  apply H2 in H8. apply H in H8. destruct H8.
   unfold safeAt_bs, not in H4. apply H4 in H9. inversion H9.
-  intros. inversion H3; subst. apply H2 in H8. apply H0 in H8.
+  intros. inversion H3; subst. apply H2 in H8. apply H in H8.
   destruct H8. apply H5 in H9. assumption.
 Qed.
 
