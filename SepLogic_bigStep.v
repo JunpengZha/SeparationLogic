@@ -434,6 +434,26 @@ Proof with eauto.
     split. apply disjoint_l_seq ... apply safeAt_bs_dispose ...
     apply union_dispose ... apply safeAt_bs_dispose ...
 Qed.
+
+Lemma while_safty : forall b c st,
+    (forall st', beval (fst st') b = true -> safeAt_bs c st') ->
+    safeAt_bs (WHILE b DO c END) st.
+Proof.
+  intros. unfold safeAt_bs, not. intro.
+  remember (WHILE b DO c END, st) as comst.
+  remember Abt as est. generalize dependent st.
+  generalize dependent c.
+  induction H0; intros; try inversion Heqcomst; try inversion Heqest;
+    try clear Heqcomst; try clear Heqest; subst.
+  - apply (H1 (s, h)) in H. unfold safeAt_bs, not in H.
+    apply H in H0. inversion H0.
+  - assert ((WHILE b DO c0 END, (s', h')) =
+            (WHILE b DO c0 END, (s', h')) -> False).
+    {
+      apply IHbig_step2; auto.
+    }
+    apply H1. reflexivity.
+Qed.
     
 Theorem safty_mono_correct : forall c,
     safty_Mono_bs c.
